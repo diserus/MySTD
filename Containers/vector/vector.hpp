@@ -11,7 +11,6 @@ namespace mystd
     public:
         typedef std::size_t size_type;
         typedef T *input_iterator;
-        typedef implementation - defined const_iterator;
 
         vector()
         {
