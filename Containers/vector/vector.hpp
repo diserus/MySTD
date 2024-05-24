@@ -105,8 +105,7 @@ namespace mystd
             }
             else
             {
-                std::cerr << "Index out of range";
-                exit(0);
+                throw std::out_of_range("Index out of range in mystd::vector::at");
             }
         }
 
@@ -262,6 +261,7 @@ namespace mystd
 
             return iter;
         }
+
         iterator insert(iterator position, const T &&value)
         {
             if (position == end())
@@ -281,6 +281,7 @@ namespace mystd
 
             return begin() + index;
         }
+
         void insert(iterator position, size_type count, const T &value)
         {
             if (count == 0)
@@ -307,6 +308,7 @@ namespace mystd
 
             _size += count;
         }
+
         void swap(vector &other)
         {
             vector<T> temp;
