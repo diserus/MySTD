@@ -10,7 +10,8 @@ namespace mystd
     {
     public:
         typedef std::size_t size_type;
-        typedef T *input_iterator;
+        typedef T *iterator;
+        typedef std::reverse_iterator<iterator> reverse_iterator;
 
         vector()
         {
@@ -41,7 +42,7 @@ namespace mystd
             }
         }
 
-        vector(input_iterator start, input_iterator end)
+        vector(iterator start, iterator end)
         {
             _size = end - start;
             _capacity = _size;
@@ -155,6 +156,7 @@ namespace mystd
                 data = temp;
             }
         }
+
         void shrink_to_fit()
         {
             if (_capacity > _size)
@@ -169,11 +171,13 @@ namespace mystd
                 data = temp;
             }
         }
+
         void clear()
         {
             while (_size)
                 pop_back();
         }
+
         void pop_back()
         {
             if (_size)
@@ -181,6 +185,7 @@ namespace mystd
                 _size--;
             }
         }
+
         void push_back(const T &value)
         {
             if (_capacity == _size)
@@ -188,6 +193,7 @@ namespace mystd
             data[_size] = value;
             _size++;
         }
+
         void resize(size_type new_size, const T &val = T())
         {
             if (new_size > _capacity)
@@ -195,6 +201,118 @@ namespace mystd
             for (size_type i = _size; i < new_size; i++)
                 data[i] = val;
             _size = new_size;
+        }
+
+        iterator begin()
+        {
+            return data;
+        }
+
+        iterator end()
+        {
+            return data + _size;
+        }
+
+        reverse_iterator rbegin()
+        {
+            return reverse_iterator(end());
+        }
+
+        reverse_iterator rend()
+        {
+            return reverse_iterator(begin());
+        }
+
+        iterator erase(iterator position)
+        {
+            if (position == end())
+            {
+                return end();
+            }
+
+            auto iter = position;
+            ++iter;
+
+            if (iter != end())
+            {
+                std::copy(iter, end(), position);
+            }
+
+            pop_back();
+
+            return iter;
+        }
+
+        iterator erase(iterator pos1, iterator pos2)
+        {
+            if (pos1 == pos2)
+            {
+                return pos1;
+            }
+
+            auto iter = pos1;
+            size_type numRemoved = std::distance(pos1, pos2);
+
+            if (pos2 != end())
+            {
+                std::copy(pos2, end(), pos1);
+            }
+
+            resize(size() - numRemoved);
+
+            return iter;
+        }
+        iterator insert(iterator position, const T &&value)
+        {
+            if (position == end())
+            {
+                push_back(value);
+                return end() - 1;
+            }
+            size_type index = position - begin();
+            for (size_type i = size(); i > index; --i)
+            {
+                data[i] = std::move(data[i - 1]);
+            }
+
+            data[index] = std::move(value);
+
+            _size++;
+
+            return begin() + index;
+        }
+        void insert(iterator position, size_type count, const T &value)
+        {
+            if (count == 0)
+            {
+                return;
+            }
+
+            size_type index = position - begin();
+
+            if (size() + count > capacity())
+            {
+                reserve(size() + count);
+            }
+
+            for (size_type i = size() + count - 1; i >= index + count; --i)
+            {
+                data[i] = std::move(data[i - count]);
+            }
+
+            for (size_type i = 0; i < count; ++i)
+            {
+                data[index + i] = value;
+            }
+
+            _size += count;
+        }
+        void swap(vector &other)
+        {
+            vector<T> temp;
+            temp = other;
+            other = *this;
+            *this = temp;
         }
 
     private:
