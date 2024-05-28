@@ -39,7 +39,7 @@ namespace mystd
 
         ~list()
         {
-            delete head;
+            clear();
         }
 
         void push_back(const T &value)
@@ -59,6 +59,24 @@ namespace mystd
             }
             _size++;
         }
+        void pop_back()
+        {
+            if (_size == 0)
+                return;
+            else if (_size == 1)
+                delete head;
+            else
+            {
+                Node<T> *current = head;
+                while (current->next != nullptr)
+                {
+                    current = current->next;
+                }
+                delete current;
+            }
+            _size--;
+        }
+
         bool empty()
         {
             return head == nullptr;
@@ -77,6 +95,14 @@ namespace mystd
                 current = current->next;
             }
             return current;
+        }
+
+        void clear()
+        {
+            while (_size)
+            {
+                pop_back();
+            }
         }
 
     private:
